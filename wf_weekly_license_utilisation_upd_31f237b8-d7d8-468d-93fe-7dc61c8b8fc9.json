@@ -1,0 +1,70 @@
+{
+  "id": "31f237b8-d7d8-468d-93fe-7dc61c8b8fc9",
+  "title": "Weekly License Utilisation Updates",
+  "tasks": {
+    "send_license_usage": {
+      "name": "send_license_usage",
+      "action": "dynatrace.email:send-email",
+      "description": "Send email",
+      "input": {
+        "cc": [],
+        "to": [],
+        "bcc": [],
+        "taskId": "{{ task().id }}",
+        "content": "Your current license utilisation is at:\n\n{{result(\"collect_license_usage\").used}}/{{result(\"collect_license_usage\").total}} {{result(\"collect_license_usage\").currencyCode}}",
+        "subject": "Weekly license consumption update",
+        "executionId": "{{ execution().id }}",
+        "environmentUrl": "{{ environment().url }}"
+      },
+      "position": {
+        "x": 0,
+        "y": 2
+      },
+      "predecessors": [
+        "collect_license_usage"
+      ],
+      "conditions": {
+        "states": {
+          "collect_license_usage": "OK"
+        }
+      }
+    },
+    "collect_license_usage": {
+      "name": "collect_license_usage",
+      "action": "dynatrace.automations:run-javascript",
+      "description": "Build a custom task running js Code",
+      "input": {
+        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\n\nexport default async function ({ executionId }) {\n\n  //To use the account management API you will require a bearer token\n  //This requires the use of the OAuth client you can find a link on how to get\n  //The required variables below here\n  //https://docs.dynatrace.com/docs/manage/identity-access-management/access-tokens-and-oauth-clients/oauth-clients\n\n  let client_id = \"insert client id here\";\n  let client_secret = \"insert client secret here\";\n  let account_uuid = \"insert account uuid here\"\n\n  //The revelant subscription id is also required to find the usage\n  //We can find a list of all the subscriptions here and you will need to choose which one you want to use\n  //https://docs.dynatrace.com/docs/discover-dynatrace/references/dynatrace-api/account-management-api/dynatrace-platform-subscription-api/subscriptions/get-all\n\n  let subscription_uuid = \"insert subscription uuid here\"\n  \n  // Getting the access token \n  async function get_token() {\n    const myHeaders = new Headers();\n    myHeaders.append(\"Content-Type\", \"application/x-www-form-urlencoded\");\n\n    const urlencoded = new URLSearchParams();\n    urlencoded.append(\"grant_type\", \"client_credentials\");\n    urlencoded.append(\"client_id\", client_id);\n    urlencoded.append(\"client_secret\", client_secret);\n    urlencoded.append(\"scope\", \"account-uac-read\");\n    urlencoded.append(\"resource\", \"urn:dtaccount:\" + account_uuid);\n\n    const requestOptions = {\n    method: \"POST\",\n    headers: myHeaders,\n    body: urlencoded,\n    redirect: \"follow\"\n    };\n\n    let result = []\n    try {\n    const response = await fetch(\"https://sso.dynatrace.com/sso/oauth2/token\", requestOptions);\n    result = await response.text();\n    console.log(result)\n    } catch (error) {\n    console.error(error);\n    };\n\n    let jsonResult = JSON.parse(result);\n    let token = jsonResult.access_token;\n    \n    return get_subscription_usage(token);\n  }\n\n  //Getting the subscription usage\n  async function get_subscription_usage(token) {\n    const myHeaders = new Headers();\n    myHeaders.append(\"accept\", \"application/json\");\n    myHeaders.append(\"Authorization\", \"Bearer \" + token);\n\n    const requestOptions = {\n    method: \"GET\",\n    headers: myHeaders,\n    redirect: \"follow\"\n    };\n\n    let result = []\n    try {\n    const response = await fetch(\"https://api.dynatrace.com/sub/v2/accounts/\" + account_uuid + \"/subscriptions/\" + subscription_uuid, requestOptions);\n    result = await response.text();\n    console.log(result)\n    } catch (error) {\n    console.error(error);\n    };\n\n    let jsonResult = JSON.parse(result);\n    let budget = jsonResult.budget;\n    console.log(budget);\n\n    return budget;\n  }\n\n   \n  const ex = await execution(executionId);\n  console.log('Automated script execution on behalf of', ex.trigger);\n\n  return get_token();\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "predecessors": []
+    }
+  },
+  "description": "",
+  "actor": "1d3217b8-7e2d-4f83-ad3e-70742fcdc678",
+  "owner": "1d3217b8-7e2d-4f83-ad3e-70742fcdc678",
+  "ownerType": "USER",
+  "isPrivate": true,
+  "trigger": {
+    "schedule": {
+      "isActive": true,
+      "isFaulty": false,
+      "trigger": {
+        "time": "09:00",
+        "type": "time"
+      },
+      "rule": "08277c5d-518d-455c-9a81-244bd58849d2",
+      "filterParameters": {
+        "earliestStart": "2025-01-21"
+      },
+      "timezone": "Australia/Sydney",
+      "inputs": {},
+      "nextExecution": "2025-01-26T22:00:00.000Z"
+    }
+  },
+  "schemaVersion": 3,
+  "type": "STANDARD"
+}
