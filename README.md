@@ -1,7 +1,7 @@
 # Dynatrace-Weekly-License-Usage-Update-Workflow
 This is a workflow leveraging the Account Management API send emails at regular intervals about Dynatrace license utilisation for DPS
 
-The first step will be to upload the workflow json, the Dynatrace documentation here provides the steps on how to do so https://docs.dynatrace.com/docs/analyze-explore-automate/workflows/manage-workflows/workflows-upload
+The first step will be to upload the workflow template, the Dynatrace documentation here provides the steps on how to do so https://docs.dynatrace.com/docs/analyze-explore-automate/workflows/manage-workflows/workflows-upload
 
 Once it has been uploaded this is what the workflow will look like
 ![image](https://github.com/user-attachments/assets/110d4889-beff-4cd0-8dd3-5a13bdd5c19f)
