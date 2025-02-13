@@ -10,11 +10,8 @@ In the Javascript action called collect_license_usage you will need to insert yo
 
 This documentation here will assist you with how to procure an OAuth2 client as this is required for the Account Manage API that is leveraged https://docs.dynatrace.com/docs/manage/identity-access-management/access-tokens-and-oauth-clients/oauth-clients
 
-Further more you will also be required to provide your subscription ID for the relevant subscription that you are wanting weekly updates on.
+<img width="885" alt="image" src="https://github.com/user-attachments/assets/fbe886c9-7bc4-46a0-a91d-9c76b88e60be" />
 
-This API here will provide all the subscriptions on your account and you will need to choose the subscription ID for the subscription to be updated on weekly https://docs.dynatrace.com/docs/discover-dynatrace/references/dynatrace-api/account-management-api/dynatrace-platform-subscription-api/subscriptions/get-all
-
-![image](https://github.com/user-attachments/assets/762a79f6-743b-4b64-9816-272355f32e8b)
 
 After you have provided the relevant items to the variables in the Javascript, all that is remaining is for you to add in the recipients as well as customise the email content.
 
